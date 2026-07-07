@@ -1,0 +1,5 @@
+{
+    "port": "3100",
+    "mongodbUrl":"mongodb+srv://mongodb-wilfred:mongodbwiffi102@cluster0.idfwedf.mongodb.net/",
+    "adminSecretToken": "admin1234567890"
+}

@@ -1,0 +1,46 @@
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, Res } from '@nestjs/common';
+import { UsersService } from './users.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import express from 'express'
+
+@Controller('users')
+export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
+
+  @Post()
+  async create(@Body() createUserDto: CreateUserDto) {
+    return this.usersService.create(createUserDto);
+  }
+
+  @Get()
+  findAll() {
+    return this.usersService.findAll();
+  }
+
+  @Post('/login')
+  @HttpCode(HttpStatus.OK)
+  async login(@Body() loginUser: {email: string; password: string}, @Res({passthrough: true}) response: express.Response) {
+    const loginRes =  await this.usersService.login(loginUser.email, loginUser.password);
+    if(loginRes.success){
+      response.cookie('buy-well-auth-token', loginRes.result?.token, {httpOnly: true})
+    }
+    delete loginRes.result?.token;
+    return loginRes;
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.usersService.findOne(+id);
+  }
+
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.update(+id, updateUserDto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.usersService.remove(+id);
+  }
+}
